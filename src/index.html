@@ -2,19 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
-    />
+    <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Breathe Widget</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="/main.js" defer></script>
   </head>
+
   <body>
-    <div class="app">
+    <main class="app" data-tauri-drag-region>
       <div class="circle" id="circle"></div>
       <div class="label" id="label">Inhale</div>
-      <div class="controls" id="controls">
+      <div class="controls" id="controls" data-tauri-drag-region="false">
         <label class="control">
           Seconds per phase
           <input id="speed" type="range" min="2" max="8" step="0.5" value="4" />
@@ -29,7 +27,6 @@
           Show text
         </label>
       </div>
-    </div>
-    <script src="./renderer.js"></script>
+    </main>
   </body>
 </html>

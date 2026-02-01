@@ -1,29 +1,14 @@
 {
   "name": "breathe-widget",
+  "private": true,
   "version": "0.1.0",
-  "description": "Lightweight breathing reminder widget.",
-  "main": "main.js",
-  "author": "",
-  "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
-  },
-  "build": {
-    "appId": "com.breathe.widget",
-    "productName": "BreatheWidget",
-    "files": [
-      "**/*"
-    ],
-    "win": {
-      "target": "portable"
-    },
-    "portable": {
-      "artifactName": "BreatheWidget.exe"
-    }
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
   },
   "devDependencies": {
-    "electron": "^40.1.0",
-    "electron-builder": "^26.7.0"
+    "@tauri-apps/cli": "^2"
   }
 }
