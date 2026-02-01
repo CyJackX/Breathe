@@ -10,7 +10,6 @@ body {
   background: transparent;
   color: #e2e8f0;
   overflow: hidden;
-  -webkit-app-region: drag;
 }
 
 .app {
@@ -23,7 +22,6 @@ body {
   gap: 8px;
   padding: 10px 12px 12px;
   position: relative;
-  -webkit-app-region: drag;
 }
 
 .gear-button {
@@ -54,7 +52,8 @@ body {
   fill: currentColor;
 }
 
-.app:hover .gear-button {
+.app:hover .gear-button,
+.app.settings-open .gear-button {
   opacity: 1;
   pointer-events: auto;
 }
@@ -69,6 +68,7 @@ body {
   --breathe-min-scale: 0.35;
   flex: 0 0 auto;
   flex-shrink: 0;
+  -webkit-app-region: drag;
   position: relative;
   overflow: hidden;
   display: grid;
