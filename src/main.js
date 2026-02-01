@@ -4,6 +4,8 @@ const object = document.getElementById("object");
 const objectImage = document.getElementById("objectImage");
 const speedInput = document.getElementById("speed");
 const speedValue = document.getElementById("speedValue");
+const minScaleInput = document.getElementById("minScale");
+const minScaleValue = document.getElementById("minScaleValue");
 const colorInput = document.getElementById("color");
 const pickImageButton = document.getElementById("pickImage");
 const clearImageButton = document.getElementById("clearImage");
@@ -13,12 +15,18 @@ const fileInput = document.getElementById("fileInput");
 let inhaleSeconds = Number(speedInput.value);
 let cycleStart = performance.now();
 let accentColor = colorInput.value;
+let minScale = Number(minScaleInput.value);
 
 const updateAnimation = () => {
   const cycleSeconds = inhaleSeconds * 2;
   object.style.animationDuration = `${cycleSeconds}s`;
   speedValue.textContent = `${inhaleSeconds.toFixed(1)}s`;
   cycleStart = performance.now();
+};
+
+const updateMinScale = () => {
+  object.style.setProperty("--breathe-min-scale", String(minScale));
+  minScaleValue.textContent = `${Math.round(minScale * 100)}%`;
 };
 
 const applyAccent = () => {
@@ -37,6 +45,11 @@ const clearAccent = () => {
 speedInput.addEventListener("input", () => {
   inhaleSeconds = Number(speedInput.value);
   updateAnimation();
+});
+
+minScaleInput.addEventListener("input", () => {
+  minScale = Number(minScaleInput.value);
+  updateMinScale();
 });
 
 colorInput.addEventListener("input", () => {
@@ -95,5 +108,6 @@ clearImageButton.addEventListener("click", () => {
 });
 
 updateAnimation();
+updateMinScale();
 applyAccent();
 setSettingsOpen(false);
