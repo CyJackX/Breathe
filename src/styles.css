@@ -18,9 +18,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 10px 12px 12px;
+  justify-content: center;
+  padding: 10px;
   position: relative;
 }
 
@@ -90,90 +89,6 @@ body {
 
 .object.has-image img {
   display: block;
-}
-
-.label {
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-
-.controls {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 11px;
-  opacity: 0.9;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 10px;
-  opacity: 0;
-  pointer-events: none;
-  max-height: 0;
-  overflow: hidden;
-  transform: translateY(-4px);
-  transition: opacity 0.2s ease, transform 0.2s ease, max-height 0.2s ease;
-  visibility: hidden;
-  -webkit-app-region: no-drag;
-}
-
-.app.settings-open .controls {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-  max-height: 220px;
-  visibility: visible;
-}
-
-.control {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.control.inline {
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-}
-
-#speed {
-  width: 100%;
-}
-
-#speedValue {
-  align-self: flex-end;
-  font-variant-numeric: tabular-nums;
-}
-
-.button-row {
-  display: flex;
-  gap: 6px;
-}
-
-button {
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(30, 41, 59, 0.7);
-  color: #e2e8f0;
-  border-radius: 8px;
-  padding: 4px 8px;
-  font-size: 11px;
-  -webkit-app-region: no-drag;
-}
-
-button:hover {
-  border-color: rgba(148, 163, 184, 0.7);
-}
-
-input[type="range"],
-input[type="color"],
-input[type="checkbox"] {
-  cursor: pointer;
-  -webkit-app-region: no-drag;
 }
 
 @keyframes breathe {

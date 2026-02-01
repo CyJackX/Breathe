@@ -1,113 +1,104 @@
+const SETTINGS_EVENT = "settings:changed";
+const STORE_FILE = "settings.json";
+
 const app = document.getElementById("app");
 const gearButton = document.getElementById("gearButton");
 const object = document.getElementById("object");
 const objectImage = document.getElementById("objectImage");
-const speedInput = document.getElementById("speed");
-const speedValue = document.getElementById("speedValue");
-const minScaleInput = document.getElementById("minScale");
-const minScaleValue = document.getElementById("minScaleValue");
-const colorInput = document.getElementById("color");
-const pickImageButton = document.getElementById("pickImage");
-const clearImageButton = document.getElementById("clearImage");
-const controls = document.getElementById("controls");
-const fileInput = document.getElementById("fileInput");
 
-let inhaleSeconds = Number(speedInput.value);
-let cycleStart = performance.now();
-let accentColor = colorInput.value;
-let minScale = Number(minScaleInput.value);
+const { load } = window.__TAURI__.store;
+const { listen } = window.__TAURI__.event;
+const tauriWindowNs = window.__TAURI__.window;
+const tauriWebviewWindowNs = window.__TAURI__.webviewWindow;
 
-const updateAnimation = () => {
-  const cycleSeconds = inhaleSeconds * 2;
-  object.style.animationDuration = `${cycleSeconds}s`;
-  speedValue.textContent = `${inhaleSeconds.toFixed(1)}s`;
-  cycleStart = performance.now();
-};
-
-const updateMinScale = () => {
-  object.style.setProperty("--breathe-min-scale", String(minScale));
-  minScaleValue.textContent = `${Math.round(minScale * 100)}%`;
-};
-
-const applyAccent = () => {
-  if (object.classList.contains("has-image")) {
-    return;
+const getWindowByLabel = async (label) => {
+  // Tauri v2 global API shape can vary a bit; try the common ones.
+  if (tauriWindowNs?.getByLabel) return await tauriWindowNs.getByLabel(label);
+  if (tauriWindowNs?.Window?.getByLabel) return await tauriWindowNs.Window.getByLabel(label);
+  if (tauriWebviewWindowNs?.getByLabel) return await tauriWebviewWindowNs.getByLabel(label);
+  if (tauriWebviewWindowNs?.WebviewWindow?.getByLabel) {
+    return await tauriWebviewWindowNs.WebviewWindow.getByLabel(label);
   }
-  object.style.background = accentColor;
-  object.style.boxShadow = `0 0 24px ${accentColor}80`;
+  return null;
 };
+
+const defaultSettings = () => ({
+  speedSeconds: 4,
+  minScale: 0.35,
+  accentColor: "#7dd3fc",
+  imageDataUrl: null
+});
 
 const clearAccent = () => {
   object.style.removeProperty("background");
   object.style.removeProperty("box-shadow");
 };
 
-speedInput.addEventListener("input", () => {
-  inhaleSeconds = Number(speedInput.value);
-  updateAnimation();
-});
+const applySettings = (settings) => {
+  const speedSeconds = Number(settings.speedSeconds ?? 4);
+  const minScale = Number(settings.minScale ?? 0.35);
+  const accentColor = String(settings.accentColor ?? "#7dd3fc");
+  const imageDataUrl = settings.imageDataUrl ?? null;
 
-minScaleInput.addEventListener("input", () => {
-  minScale = Number(minScaleInput.value);
-  updateMinScale();
-});
+  object.style.animationDuration = `${speedSeconds * 2}s`;
+  object.style.setProperty("--breathe-min-scale", String(minScale));
 
-colorInput.addEventListener("input", () => {
-  accentColor = colorInput.value;
-  applyAccent();
-});
-
-const setSettingsOpen = (isOpen) => {
-  app.classList.toggle("settings-open", isOpen);
-  controls.setAttribute("aria-hidden", String(!isOpen));
-};
-
-gearButton.addEventListener("click", (event) => {
-  event.stopPropagation();
-  setSettingsOpen(!app.classList.contains("settings-open"));
-});
-
-document.addEventListener("pointerdown", (event) => {
-  if (!app.classList.contains("settings-open")) {
-    return;
-  }
-  const target = event.target;
-  const clickedInsideControls = target.closest(".controls");
-  const clickedGear = target.closest("#gearButton");
-  if (!clickedInsideControls && !clickedGear) {
-    setSettingsOpen(false);
-  }
-});
-
-pickImageButton.addEventListener("click", async () => {
-  fileInput.click();
-});
-
-fileInput.addEventListener("change", async () => {
-  const file = fileInput.files?.[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    const result = reader.result;
-    if (typeof result !== "string") return;
-    objectImage.src = result;
-    objectImage.alt = "Custom breathing object";
+  if (typeof imageDataUrl === "string" && imageDataUrl.length > 0) {
+    objectImage.src = imageDataUrl;
+    objectImage.alt = "Breathing object";
     object.classList.add("has-image");
     clearAccent();
-  };
-  reader.readAsDataURL(file);
-});
+    return;
+  }
 
-clearImageButton.addEventListener("click", () => {
   objectImage.removeAttribute("src");
   objectImage.alt = "";
   object.classList.remove("has-image");
-  fileInput.value = "";
-  applyAccent();
+  object.style.background = accentColor;
+  object.style.boxShadow = `0 0 24px ${accentColor}80`;
+};
+
+const openSettingsWindow = async () => {
+  const existing = await getWindowByLabel("settings");
+  if (existing) {
+    await existing.show();
+    await existing.setFocus();
+    await existing.center();
+    return;
+  }
+
+  const WebviewWindowCtor =
+    tauriWebviewWindowNs?.WebviewWindow ?? tauriWebviewWindowNs?.WebviewWindow;
+  if (!WebviewWindowCtor) return;
+
+  const win = new WebviewWindowCtor("settings", {
+    url: "settings.html",
+    title: "BreatheWidget Settings",
+    decorations: true,
+    resizable: true,
+    width: 520,
+    height: 520
+  });
+  win.once("tauri://created", async () => {
+    await win.show();
+    await win.setFocus();
+    await win.center();
+  });
+};
+
+gearButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  openSettingsWindow();
 });
 
-updateAnimation();
-updateMinScale();
-applyAccent();
-setSettingsOpen(false);
+window.addEventListener("DOMContentLoaded", async () => {
+  const store = await load(STORE_FILE, { autoSave: false });
+  const stored = await store.get("settings");
+  const initial = { ...defaultSettings(), ...(stored ?? {}) };
+  applySettings(initial);
+
+  await listen(SETTINGS_EVENT, (event) => {
+    applySettings(event.payload);
+  });
+});

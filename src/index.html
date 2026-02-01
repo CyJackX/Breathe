@@ -36,47 +36,6 @@
       <div class="object" id="object">
         <img id="objectImage" alt="" />
       </div>
-      <div
-        class="controls"
-        id="controls"
-        data-tauri-drag-region="false"
-        aria-hidden="true"
-      >
-        <label class="control">
-          Seconds per phase
-          <input id="speed" type="range" min="1" max="10" step="0.5" value="4" />
-          <span id="speedValue">4.0s</span>
-        </label>
-        <label class="control">
-          Min size
-          <input
-            id="minScale"
-            type="range"
-            min="0.0"
-            max="0.99"
-            step="0.01"
-            value="0.35"
-          />
-          <span id="minScaleValue">35%</span>
-        </label>
-        <label class="control">
-          Accent color
-          <input id="color" type="color" value="#7dd3fc" />
-        </label>
-        <div class="control">
-          <span>Breathing object</span>
-          <div class="button-row">
-            <button id="pickImage" type="button">Choose image</button>
-            <button id="clearImage" type="button">Clear</button>
-          </div>
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/*,.svg"
-            style="display: none"
-          />
-        </div>
-      </div>
     </main>
   </body>
 </html>
