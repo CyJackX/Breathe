@@ -54,8 +54,7 @@ const readImageAsDataUrl = (file) =>
   });
 
 window.addEventListener("DOMContentLoaded", async () => {
-  // Important UX: don't destroy the settings window when user clicks X.
-  // Hiding keeps the window instance alive so the widget can re-show it.
+  // UX: don't destroy settings window on X; hide it.
   const currentWindow = getCurrentWindow();
   await currentWindow.onCloseRequested(async (event) => {
     event.preventDefault();

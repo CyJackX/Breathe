@@ -23,10 +23,18 @@ body {
   position: relative;
 }
 
-.gear-button {
+.top-right-controls {
   position: absolute;
   top: 8px;
   right: 8px;
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+  -webkit-app-region: no-drag;
+}
+
+.gear-button,
+.exit-button {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -41,18 +49,20 @@ body {
   pointer-events: none;
   transition: opacity 0.2s ease;
   cursor: pointer;
-  z-index: 3;
   -webkit-app-region: no-drag;
 }
 
-.gear-button svg {
+.gear-button svg,
+.exit-button svg {
   width: 16px;
   height: 16px;
   fill: currentColor;
 }
 
 .app:hover .gear-button,
-.app.settings-open .gear-button {
+.app:hover .exit-button,
+.app.settings-open .gear-button,
+.app.settings-open .exit-button {
   opacity: 1;
   pointer-events: auto;
 }

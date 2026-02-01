@@ -3,6 +3,7 @@ const STORE_FILE = "settings.json";
 
 const app = document.getElementById("app");
 const gearButton = document.getElementById("gearButton");
+const exitButton = document.getElementById("exitButton");
 const object = document.getElementById("object");
 const objectImage = document.getElementById("objectImage");
 
@@ -86,10 +87,35 @@ const openSettingsWindow = async () => {
   });
 };
 
+const exitApp = async () => {
+  // Close settings window if it exists (use destroy to bypass the "hide on close" handler).
+  const settingsWin = await getWindowByLabel("settings");
+  if (settingsWin) {
+    try {
+      await settingsWin.destroy();
+    } catch {
+      // ignore
+    }
+  }
+
+  // Destroy the widget window (current window).
+  const currentWindow =
+    tauriWindowNs?.getCurrentWindow ? tauriWindowNs.getCurrentWindow() : null;
+  if (currentWindow) {
+    await currentWindow.destroy();
+  }
+};
+
 gearButton.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
   openSettingsWindow();
+});
+
+exitButton?.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  exitApp();
 });
 
 window.addEventListener("DOMContentLoaded", async () => {

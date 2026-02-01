@@ -10,6 +10,7 @@
 
   <body>
     <main class="app" id="app">
+      <div class="top-right-controls" data-tauri-drag-region="false">
       <button
         class="gear-button"
         id="gearButton"
@@ -33,6 +34,21 @@
           />
         </svg>
       </button>
+      <button
+        class="exit-button"
+        id="exitButton"
+        data-tauri-drag-region="false"
+        aria-label="Exit"
+        type="button"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 1 0 5.7 7.11L10.59 12l-4.9 4.89a1 1 0 1 0 1.42 1.42L12 13.41l4.89 4.9a1 1 0 0 0 1.42-1.42L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4Z"
+          />
+        </svg>
+      </button>
+      </div>
       <div class="object" id="object">
         <img id="objectImage" alt="" />
       </div>
