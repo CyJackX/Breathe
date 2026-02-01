@@ -12,6 +12,7 @@ const fileInput = document.getElementById("fileInput");
 
 let inhaleSeconds = Number(speedInput.value);
 let cycleStart = performance.now();
+let accentColor = colorInput.value;
 
 const updateAnimation = () => {
   const cycleSeconds = inhaleSeconds * 2;
@@ -20,15 +21,27 @@ const updateAnimation = () => {
   cycleStart = performance.now();
 };
 
+const applyAccent = () => {
+  if (object.classList.contains("has-image")) {
+    return;
+  }
+  object.style.background = accentColor;
+  object.style.boxShadow = `0 0 24px ${accentColor}80`;
+};
+
+const clearAccent = () => {
+  object.style.removeProperty("background");
+  object.style.removeProperty("box-shadow");
+};
+
 speedInput.addEventListener("input", () => {
   inhaleSeconds = Number(speedInput.value);
   updateAnimation();
 });
 
 colorInput.addEventListener("input", () => {
-  const color = colorInput.value;
-  object.style.background = color;
-  object.style.boxShadow = `0 0 24px ${color}80`;
+  accentColor = colorInput.value;
+  applyAccent();
 });
 
 const setSettingsOpen = (isOpen) => {
@@ -68,6 +81,7 @@ fileInput.addEventListener("change", async () => {
     objectImage.src = result;
     objectImage.alt = "Custom breathing object";
     object.classList.add("has-image");
+    clearAccent();
   };
   reader.readAsDataURL(file);
 });
@@ -77,7 +91,9 @@ clearImageButton.addEventListener("click", () => {
   objectImage.alt = "";
   object.classList.remove("has-image");
   fileInput.value = "";
+  applyAccent();
 });
 
 updateAnimation();
+applyAccent();
 setSettingsOpen(false);
