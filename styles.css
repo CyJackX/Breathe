@@ -1,0 +1,86 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: transparent;
+  color: #e2e8f0;
+  -webkit-app-region: drag;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px 12px;
+}
+
+.circle {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  box-shadow: 0 0 24px rgba(125, 211, 252, 0.45);
+  animation: breathe 8s ease-in-out infinite;
+}
+
+.label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  opacity: 0.9;
+  -webkit-app-region: no-drag;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+#speed {
+  width: 100%;
+}
+
+#speedValue {
+  align-self: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.35);
+    opacity: 0.55;
+  }
+}

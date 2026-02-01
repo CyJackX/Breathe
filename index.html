@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breathe Widget</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="circle" id="circle"></div>
+      <div class="label" id="label">Inhale</div>
+      <div class="controls" id="controls">
+        <label class="control">
+          Seconds per phase
+          <input id="speed" type="range" min="2" max="8" step="0.5" value="4" />
+          <span id="speedValue">4.0s</span>
+        </label>
+        <label class="control">
+          Circle color
+          <input id="color" type="color" value="#7dd3fc" />
+        </label>
+        <label class="control inline">
+          <input id="showText" type="checkbox" checked />
+          Show text
+        </label>
+      </div>
+    </div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
