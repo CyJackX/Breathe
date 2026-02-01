@@ -2,11 +2,9 @@ const app = document.getElementById("app");
 const gearButton = document.getElementById("gearButton");
 const object = document.getElementById("object");
 const objectImage = document.getElementById("objectImage");
-const label = document.getElementById("label");
 const speedInput = document.getElementById("speed");
 const speedValue = document.getElementById("speedValue");
 const colorInput = document.getElementById("color");
-const showTextInput = document.getElementById("showText");
 const pickImageButton = document.getElementById("pickImage");
 const clearImageButton = document.getElementById("clearImage");
 const controls = document.getElementById("controls");
@@ -22,12 +20,6 @@ const updateAnimation = () => {
   cycleStart = performance.now();
 };
 
-const updateLabel = () => {
-  const elapsed = (performance.now() - cycleStart) / 1000;
-  const phase = elapsed % (inhaleSeconds * 2);
-  label.textContent = phase < inhaleSeconds ? "Inhale" : "Exhale";
-};
-
 speedInput.addEventListener("input", () => {
   inhaleSeconds = Number(speedInput.value);
   updateAnimation();
@@ -37,10 +29,6 @@ colorInput.addEventListener("input", () => {
   const color = colorInput.value;
   object.style.background = color;
   object.style.boxShadow = `0 0 24px ${color}80`;
-});
-
-showTextInput.addEventListener("change", () => {
-  label.style.display = showTextInput.checked ? "block" : "none";
 });
 
 const setSettingsOpen = (isOpen) => {
@@ -93,4 +81,3 @@ clearImageButton.addEventListener("click", () => {
 
 updateAnimation();
 setSettingsOpen(false);
-setInterval(updateLabel, 120);
