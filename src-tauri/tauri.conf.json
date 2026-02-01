@@ -13,7 +13,7 @@
         "title": "BreatheWidget",
         "width": 240,
         "height": 240,
-        "resizable": false,
+        "resizable": true,
         "alwaysOnTop": true,
         "transparent": true,
         "decorations": false,
