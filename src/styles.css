@@ -23,6 +23,97 @@ body {
   position: relative;
 }
 
+/* Hover-only frame indicator (visual only; does not enable resizing by itself) */
+.app::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.22);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.35) inset;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 2;
+}
+
+.app:hover::after,
+.app.settings-open::after {
+  opacity: 1;
+}
+
+.resize-handle {
+  position: absolute;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-app-region: no-drag;
+}
+
+.app:hover .resize-handle,
+.app.settings-open .resize-handle {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Edge handles */
+.resize-handle--n,
+.resize-handle--s {
+  left: 10px;
+  right: 10px;
+  height: 8px;
+  cursor: ns-resize;
+}
+.resize-handle--n {
+  top: 0;
+}
+.resize-handle--s {
+  bottom: 0;
+}
+
+.resize-handle--e,
+.resize-handle--w {
+  top: 10px;
+  bottom: 10px;
+  width: 8px;
+  cursor: ew-resize;
+}
+.resize-handle--e {
+  right: 0;
+}
+.resize-handle--w {
+  left: 0;
+}
+
+/* Corner handles */
+.resize-handle--ne,
+.resize-handle--nw,
+.resize-handle--se,
+.resize-handle--sw {
+  width: 14px;
+  height: 14px;
+}
+.resize-handle--ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.resize-handle--nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.resize-handle--se {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+.resize-handle--sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
 .top-right-controls {
   position: absolute;
   top: 8px;
@@ -68,8 +159,8 @@ body {
 }
 
 .object {
-  width: 130px;
-  height: 130px;
+  width: var(--object-size, 130px);
+  height: var(--object-size, 130px);
   border-radius: 50%;
   background: #7dd3fc;
   box-shadow: 0 0 24px rgba(125, 211, 252, 0.45);

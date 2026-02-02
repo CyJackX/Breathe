@@ -118,7 +118,50 @@ exitButton?.addEventListener("click", (event) => {
   exitApp();
 });
 
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+const updateObjectSize = () => {
+  // Keep the breather as a 1:1 square that fits inside the window.
+  // Leave some room for padding + hover controls + resize handles.
+  const rect = app.getBoundingClientRect();
+  const inset = 28; // visual breathing room
+  const size = clamp(Math.min(rect.width, rect.height) - inset * 2, 64, 1200);
+  object.style.setProperty("--object-size", `${Math.round(size)}px`);
+};
+
+const wireResizeHandles = () => {
+  const appWindow =
+    tauriWindowNs?.getCurrentWindow ? tauriWindowNs.getCurrentWindow() : null;
+  if (!appWindow?.startResizeDragging) return;
+
+  const handles = document.querySelectorAll(".resize-handle[data-resize]");
+  handles.forEach((el) => {
+    el.addEventListener("pointerdown", async (e) => {
+      // Only primary button.
+      if (e.button !== 0) return;
+      const direction = el.getAttribute("data-resize");
+      if (!direction) return;
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        await appWindow.startResizeDragging(direction);
+      } catch {
+        // If permissions or API aren't available, fail silently.
+      }
+    });
+  });
+};
+
 window.addEventListener("DOMContentLoaded", async () => {
+  wireResizeHandles();
+  updateObjectSize();
+  try {
+    new ResizeObserver(() => updateObjectSize()).observe(app);
+  } catch {
+    // Fallback for older webviews.
+    window.addEventListener("resize", updateObjectSize);
+  }
+
   const store = await load(STORE_FILE, { autoSave: false });
   const stored = await store.get("settings");
   const initial = { ...defaultSettings(), ...(stored ?? {}) };
