@@ -77,7 +77,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
 
   minScaleInput.addEventListener("input", async () => {
-    settings.minScale = clamp(Number(minScaleInput.value), 0.1, 0.99);
+    settings.minScale = clamp(Number(minScaleInput.value), 0, 0.99);
     minScaleValue.textContent = `${Math.round(settings.minScale * 100)}%`;
     await emitAndPersist();
   });
