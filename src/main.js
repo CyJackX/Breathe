@@ -1,5 +1,9 @@
-const SETTINGS_EVENT = "settings:changed";
-const STORE_FILE = "settings.json";
+import {
+  SETTINGS_EVENT,
+  STORE_FILE,
+  STORE_KEY,
+  normalizeSettings
+} from "./settingsModel.js";
 
 const app = document.getElementById("app");
 const gearButton = document.getElementById("gearButton");
@@ -23,23 +27,17 @@ const getWindowByLabel = async (label) => {
   return null;
 };
 
-const defaultSettings = () => ({
-  speedSeconds: 4,
-  minScale: 0.35,
-  accentColor: "#7dd3fc",
-  imageDataUrl: null
-});
-
 const clearAccent = () => {
   object.style.removeProperty("background");
   object.style.removeProperty("box-shadow");
 };
 
 const applySettings = (settings) => {
-  const speedSeconds = Number(settings.speedSeconds ?? 4);
-  const minScale = Number(settings.minScale ?? 0.35);
-  const accentColor = String(settings.accentColor ?? "#7dd3fc");
-  const imageDataUrl = settings.imageDataUrl ?? null;
+  const normalized = normalizeSettings(settings);
+  const speedSeconds = normalized.speedSeconds;
+  const minScale = normalized.minScale;
+  const accentColor = normalized.accentColor;
+  const imageDataUrl = normalized.imageDataUrl;
 
   object.style.animationDuration = `${speedSeconds * 2}s`;
   object.style.setProperty("--breathe-min-scale", String(minScale));
@@ -163,9 +161,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   const store = await load(STORE_FILE, { autoSave: false });
-  const stored = await store.get("settings");
-  const initial = { ...defaultSettings(), ...(stored ?? {}) };
-  applySettings(initial);
+  const stored = await store.get(STORE_KEY);
+  applySettings(stored);
 
   await listen(SETTINGS_EVENT, (event) => {
     applySettings(event.payload);

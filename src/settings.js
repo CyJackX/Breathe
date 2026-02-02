@@ -1,5 +1,9 @@
-const SETTINGS_EVENT = "settings:changed";
-const STORE_FILE = "settings.json";
+import {
+  SETTINGS_EVENT,
+  STORE_FILE,
+  STORE_KEY,
+  normalizeSettings
+} from "./settingsModel.js";
 
 const speedInput = document.getElementById("speed");
 const speedValue = document.getElementById("speedValue");
@@ -15,17 +19,10 @@ const { load } = window.__TAURI__.store;
 const { emit } = window.__TAURI__.event;
 const { getCurrentWindow } = window.__TAURI__.window;
 
-const defaultSettings = () => ({
-  speedSeconds: 4,
-  minScale: 0.35,
-  accentColor: "#7dd3fc",
-  imageDataUrl: null
-});
-
-const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-
 let store;
-let settings = defaultSettings();
+let settings = normalizeSettings({});
+let saveTimer = null;
+const SAVE_DEBOUNCE_MS = 400;
 
 const updateUiFromSettings = () => {
   speedInput.value = String(settings.speedSeconds);
@@ -39,9 +36,33 @@ const updateUiFromSettings = () => {
   imageHint.textContent = settings.imageDataUrl ? "Image selected." : "No image selected.";
 };
 
+const scheduleSave = () => {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try {
+      await store.save();
+    } catch {
+      // ignore
+    }
+  }, SAVE_DEBOUNCE_MS);
+};
+
+const flushSave = async () => {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  try {
+    await store.save();
+  } catch {
+    // ignore
+  }
+};
+
 const emitAndPersist = async () => {
-  await store.set("settings", settings);
-  await store.save();
+  settings = normalizeSettings(settings);
+  await store.set(STORE_KEY, settings);
+  scheduleSave();
   await emit(SETTINGS_EVENT, settings);
 };
 
@@ -58,32 +79,31 @@ window.addEventListener("DOMContentLoaded", async () => {
   const currentWindow = getCurrentWindow();
   await currentWindow.onCloseRequested(async (event) => {
     event.preventDefault();
+    await flushSave();
     await currentWindow.hide();
   });
 
   store = await load(STORE_FILE, { autoSave: false });
-  const stored = await store.get("settings");
-  if (stored && typeof stored === "object") {
-    settings = { ...settings, ...stored };
-  }
+  const stored = await store.get(STORE_KEY);
+  settings = normalizeSettings(stored);
 
   updateUiFromSettings();
-  await emitAndPersist();
+  await emit(SETTINGS_EVENT, settings);
 
   speedInput.addEventListener("input", async () => {
-    settings.speedSeconds = clamp(Number(speedInput.value), 1, 10);
+    settings = normalizeSettings({ ...settings, speedSeconds: Number(speedInput.value) });
     speedValue.textContent = `${settings.speedSeconds.toFixed(1)}s`;
     await emitAndPersist();
   });
 
   minScaleInput.addEventListener("input", async () => {
-    settings.minScale = clamp(Number(minScaleInput.value), 0, 0.99);
+    settings = normalizeSettings({ ...settings, minScale: Number(minScaleInput.value) });
     minScaleValue.textContent = `${Math.round(settings.minScale * 100)}%`;
     await emitAndPersist();
   });
 
   accentColorInput.addEventListener("input", async () => {
-    settings.accentColor = accentColorInput.value;
+    settings = normalizeSettings({ ...settings, accentColor: accentColorInput.value });
     await emitAndPersist();
   });
 
@@ -94,13 +114,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (!file) return;
     const dataUrl = await readImageAsDataUrl(file);
     if (typeof dataUrl !== "string") return;
-    settings.imageDataUrl = dataUrl;
+    settings = normalizeSettings({ ...settings, imageDataUrl: dataUrl });
     imageHint.textContent = "Image selected.";
     await emitAndPersist();
   });
 
   clearImageButton.addEventListener("click", async () => {
-    settings.imageDataUrl = null;
+    settings = normalizeSettings({ ...settings, imageDataUrl: null });
     fileInput.value = "";
     imageHint.textContent = "No image selected.";
     await emitAndPersist();
