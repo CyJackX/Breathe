@@ -60,7 +60,7 @@ export const normalizeSettings = (partial) => {
 
   const speedSeconds = clamp(Number(input.speedSeconds ?? base.speedSeconds), 1, 10);
   const minScale = clamp(Number(input.minScale ?? base.minScale), 0, 0.99);
-  const widgetOpacity = clamp(Number(input.widgetOpacity ?? base.widgetOpacity), 0.05, 1);
+  const widgetOpacity = clamp(Number(input.widgetOpacity ?? base.widgetOpacity), 0.1, 1);
   const accentColor = String(input.accentColor ?? base.accentColor);
   const imageDataUrl =
     typeof input.imageDataUrl === "string" && input.imageDataUrl.length > 0
