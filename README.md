@@ -24,6 +24,31 @@ Settings are saved automatically and persist across restarts.
 
 ## Download / install
 
+### GitHub Releases
+
+Download the latest release from [GitHub Releases](https://github.com/CyJackX/Breathe/releases).
+
+**Available installers:**
+
+| Installer | SHA256 Checksum |
+|-----------|-----------------|
+| `BreatheWidget_0.1.0_x64-setup.exe` | `19ea737ed30714fa3f216501af74fb0d8f67659c402303834d0f7b5436eb66c9` |
+| `BreatheWidget_0.1.0_x64_en-US.msi` | `7481f2f1aa427f438697b7c1ccabe80d468f3f5fd8b5c274047ffd9af28e8e6f` |
+
+**To verify checksums:**
+
+Windows PowerShell:
+```powershell
+Get-FileHash .\BreatheWidget_0.1.0_x64-setup.exe -Algorithm SHA256
+```
+
+Windows Command Prompt:
+```cmd
+certutil -hashfile BreatheWidget_0.1.0_x64-setup.exe SHA256
+```
+
+### Build locally
+
 If you built locally, the Windows installer is produced at:
 
 - `src-tauri/target/release/bundle/nsis/BreatheWidget_0.1.0_x64-setup.exe`
@@ -32,7 +57,7 @@ There is also an MSI at:
 
 - `src-tauri/target/release/bundle/msi/BreatheWidget_0.1.0_x64_en-US.msi`
 
-Note: if the app is not code-signed, Windows may show a SmartScreen warning (common for freeware).
+**Note:** If the app is not code-signed, Windows may show a SmartScreen warning (common for freeware).
 
 ## Development
 
