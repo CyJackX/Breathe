@@ -166,6 +166,7 @@ body {
   box-shadow: 0 0 24px rgba(125, 211, 252, 0.45);
   animation: breathe 8s ease-in-out infinite;
   --breathe-min-scale: 0.35;
+  opacity: var(--widget-opacity, 1);
   flex: 0 0 auto;
   flex-shrink: 0;
   -webkit-app-region: drag;
@@ -195,14 +196,11 @@ body {
 @keyframes breathe {
   0% {
     transform: scale(var(--breathe-min-scale));
-    opacity: 0.55;
   }
   50% {
     transform: scale(1);
-    opacity: 1;
   }
   100% {
     transform: scale(var(--breathe-min-scale));
-    opacity: 0.55;
   }
 }

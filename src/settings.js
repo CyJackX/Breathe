@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
   SETTINGS_EVENT,
   STORE_FILE,
@@ -5,19 +7,33 @@ import {
   normalizeSettings
 } from "./settingsModel.js";
 
-const speedInput = document.getElementById("speed");
-const speedValue = document.getElementById("speedValue");
-const minScaleInput = document.getElementById("minScale");
-const minScaleValue = document.getElementById("minScaleValue");
-const accentColorInput = document.getElementById("accentColor");
-const pickImageButton = document.getElementById("pickImage");
-const clearImageButton = document.getElementById("clearImage");
-const fileInput = document.getElementById("fileInput");
-const imageHint = document.getElementById("imageHint");
+/**
+ * @template {HTMLElement} T
+ * @param {string} id
+ * @returns {T}
+ */
+const mustGet = (id) => {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`Missing element #${id}`);
+  return /** @type {T} */ (el);
+};
 
-const { load } = window.__TAURI__.store;
-const { emit } = window.__TAURI__.event;
-const { getCurrentWindow } = window.__TAURI__.window;
+/** @type {HTMLInputElement} */ const speedInput = mustGet("speed");
+/** @type {HTMLSpanElement} */ const speedValue = mustGet("speedValue");
+/** @type {HTMLInputElement} */ const minScaleInput = mustGet("minScale");
+/** @type {HTMLSpanElement} */ const minScaleValue = mustGet("minScaleValue");
+/** @type {HTMLInputElement} */ const widgetOpacityInput = mustGet("widgetOpacity");
+/** @type {HTMLSpanElement} */ const widgetOpacityValue = mustGet("widgetOpacityValue");
+/** @type {HTMLInputElement} */ const accentColorInput = mustGet("accentColor");
+/** @type {HTMLButtonElement} */ const pickImageButton = mustGet("pickImage");
+/** @type {HTMLButtonElement} */ const clearImageButton = mustGet("clearImage");
+/** @type {HTMLInputElement} */ const fileInput = mustGet("fileInput");
+/** @type {HTMLParagraphElement} */ const imageHint = mustGet("imageHint");
+
+const tauri = /** @type {any} */ (window).__TAURI__;
+const { load } = tauri.store;
+const { emit } = tauri.event;
+const { getCurrentWindow } = tauri.window;
 
 let store;
 let settings = normalizeSettings({});
@@ -30,6 +46,9 @@ const updateUiFromSettings = () => {
 
   minScaleInput.value = String(settings.minScale);
   minScaleValue.textContent = `${Math.round(settings.minScale * 100)}%`;
+
+  widgetOpacityInput.value = String(settings.widgetOpacity);
+  widgetOpacityValue.textContent = `${Math.round(settings.widgetOpacity * 100)}%`;
 
   accentColorInput.value = settings.accentColor;
 
@@ -99,6 +118,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   minScaleInput.addEventListener("input", async () => {
     settings = normalizeSettings({ ...settings, minScale: Number(minScaleInput.value) });
     minScaleValue.textContent = `${Math.round(settings.minScale * 100)}%`;
+    await emitAndPersist();
+  });
+
+  widgetOpacityInput.addEventListener("input", async () => {
+    settings = normalizeSettings({
+      ...settings,
+      widgetOpacity: Number(widgetOpacityInput.value)
+    });
+    widgetOpacityValue.textContent = `${Math.round(settings.widgetOpacity * 100)}%`;
     await emitAndPersist();
   });
 

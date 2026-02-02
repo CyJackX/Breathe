@@ -36,11 +36,13 @@ const applySettings = (settings) => {
   const normalized = normalizeSettings(settings);
   const speedSeconds = normalized.speedSeconds;
   const minScale = normalized.minScale;
+  const widgetOpacity = normalized.widgetOpacity;
   const accentColor = normalized.accentColor;
   const imageDataUrl = normalized.imageDataUrl;
 
   object.style.animationDuration = `${speedSeconds * 2}s`;
   object.style.setProperty("--breathe-min-scale", String(minScale));
+  object.style.setProperty("--widget-opacity", String(widgetOpacity));
 
   if (typeof imageDataUrl === "string" && imageDataUrl.length > 0) {
     objectImage.src = imageDataUrl;
