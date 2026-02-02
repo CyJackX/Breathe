@@ -4,6 +4,8 @@ A lightweight, always-on-top breathing reminder widget for Windows.
 
 It shows a breathing object that expands/contracts. Settings live in a separate window and apply instantly.
 
+![BreatheWidget Example](src/assets/example.jpg)
+
 ## How to use
 
 - **Move the widget**: click and drag the breathing object.
